@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr. Rocha’s English Class: Relative Clauses</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for Results -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        /* Shiny Blue Border Utility */
+        .shiny-border {
+            border: 2px solid #3b82f6;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5), 0 0 20px rgba(59, 130, 246, 0.3);
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .shiny-border:focus {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.8), 0 0 30px rgba(59, 130, 246, 0.5);
+            outline: none;
+        }
+
+        /* Correct / Incorrect states */
+        .correct-input {
+            border-color: #22c55e !important;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.5) !important;
+            background-color: rgba(34, 197, 94, 0.05);
+            color: #166534;
+        }
+        .dark .correct-input { color: #4ade80; }
+
+        .incorrect-input {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5) !important;
+            background-color: rgba(239, 68, 68, 0.05);
+            color: #991b1b;
+        }
+        .dark .incorrect-input { color: #f87171; }
+
+        /* Drag and Drop Styles */
+        .draggable {
+            cursor: pointer;
+            user-select: none;
+            touch-action: none; /* Prevent scrolling when dragging */
+        }
+        .draggable.selected {
+            ring: 4px solid #facc15;
+            transform: scale(1.05);
+        }
+        .dropzone {
+            display: inline-block;
+            min-width: 150px;
+            height: 32px;
+            border-bottom: 2px dashed #64748b;
+            vertical-align: middle;
+            text-align: center;
+            padding: 0 8px;
+            background-color: rgba(255,255,255,0.1);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .dropzone.drag-over {
+            background-color: rgba(59, 130, 246, 0.2);
+            border-bottom-color: #3b82f6;
+        }
+        .dropped-item {
+            display: inline-block;
+            background-color: #3b82f6;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Print styles */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; color: black; }
+            .section-container { box-shadow: none; border: none; }
+            .shiny-border { box-shadow: none; border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
+
+    <!-- Header -->
+    <header class="fixed top-0 w-full bg-white dark:bg-slate-800 shadow-md z-50 no-print transition-colors duration-300">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="font-bold text-lg md:text-xl text-brand truncate mr-2">Mr. Rocha’s English Class</h1>
+            <div class="flex items-center gap-4">
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition" aria-label="Toggle Dark Mode">
+                    <!-- Sun Icon (shown in dark mode) -->
+                    <svg id="icon-sun" class="w-6 h-6 hidden dark:block text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <!-- Moon Icon (shown in light mode) -->
+                    <svg id="icon-moon" class="w-6 h-6 block dark:hidden text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
+        </div>
+        <!-- Progress Bar -->
+        <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5">
+            <div id="progressBar" class="bg-brand h-1.5 transition-all duration-500 ease-out" style="width: 10%;"></div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto pt-24 pb-32 px-4">
+        
+        <!-- Section: Intro -->
+        <section id="sec-intro" class="section-container active space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <h2 class="text-2xl md:text-3xl font-bold text-center mb-6 text-brand">Relative Clauses Worksheet</h2>
+                <div class="mb-6 rounded-xl overflow-hidden shadow-sm flex justify-center bg-slate-100 dark:bg-slate-700">
+                    <img src="Image1.jpg" alt="Commuting scene in Guadalajara" class="max-w-full h-auto object-cover max-h-[400px]" onerror="this.onerror=null; this.src='https://placehold.co/800x400/1e293b/38bdf8?text=Image1+(Intro)';">
+                </div>
+                <p class="text-center mb-8">Welcome! Please fill in your details to begin.</p>
+                <div class="flex flex-col md:flex-row gap-6 max-w-2xl mx-auto">
+                    <div class="flex-1 flex flex-col">
+                        <label for="studentName" class="font-semibold mb-2">Student Name:</label>
+                        <input type="text" id="studentName" class="shiny-border p-3 bg-white dark:bg-slate-700 dark:text-white" placeholder="Type your full name here...">
+                    </div>
+                    <div class="flex-1 flex flex-col">
+                        <label for="studentDate" class="font-semibold mb-2">Date:</label>
+                        <input type="date" id="studentDate" class="shiny-border p-3 bg-white dark:bg-slate-700 dark:text-white">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Activity 1 -->
+        <section id="sec-act1" class="section-container hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <h2 class="text-xl font-bold mb-4 text-brand border-b pb-2">Activity 1: Commuting in Guadalajara</h2>
+                <p class="mb-6">Answer the following questions based on your personal experience.</p>
+                
+                <div class="space-y-6">
+                    <div>
+                        <label class="block font-semibold mb-2">1. How do you usually commute to school or other places in Guadalajara, and what are the main advantages and disadvantages of this type of transportation?</label>
+                        <textarea class="a1-input shiny-border w-full p-3 h-24 bg-white dark:bg-slate-700 resize-y" placeholder="Your answer..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-2">2. What changes could make public transportation in Guadalajara safer, faster, and more comfortable for teenagers?</label>
+                        <textarea class="a1-input shiny-border w-full p-3 h-24 bg-white dark:bg-slate-700 resize-y" placeholder="Your answer..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-2">3. Do you think people in Guadalajara should use cars less often? Why or why not, and what alternatives could they choose?</label>
+                        <textarea class="a1-input shiny-border w-full p-3 h-24 bg-white dark:bg-slate-700 resize-y" placeholder="Your answer..."></textarea>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end no-print">
+                    <button class="check-btn bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg transition" onclick="checkActivity(1, 'open')">Check Answers</button>
+                </div>
+                <div class="feedback-msg hidden mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200"></div>
+            </div>
+        </section>
+
+        <!-- Section: Activity 2 -->
+        <section id="sec-act2" class="section-container hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <h2 class="text-xl font-bold mb-4 text-brand border-b pb-2">Activity 2: Video Analysis</h2>
+                <p class="mb-6">Watch the video and tell Mr. Rocha what you saw. Be ready to provide details and examples.</p>
+                
+                <div class="w-full bg-black rounded-xl overflow-hidden mb-6 flex justify-center">
+                    <video controls class="max-w-full h-auto max-h-[400px]">
+                        <source src="Video1.mp4" type="video/mp4">
+                        Your browser does not support HTML video. 
+                        <!-- Fallback visual if video not found locally for testing -->
+                        <div class="w-full h-64 bg-slate-800 flex items-center justify-center text-slate-400">Video1.mp4 placeholder</div>
+                    </video>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-2">What did you observe in the video?</label>
+                    <textarea class="a2-input shiny-border w-full p-3 h-32 bg-white dark:bg-slate-700 resize-y" placeholder="Write your details and examples here..."></textarea>
+                </div>
+                <div class="mt-6 flex justify-end no-print">
+                    <button class="check-btn bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg transition" onclick="checkActivity(2, 'open')">Check Answers</button>
+                </div>
+                <div class="feedback-msg hidden mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200"></div>
+            </div>
+        </section>
+
+        <!-- Section: Activity 3 -->
+        <section id="sec-act3" class="section-container hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <h2 class="text-xl font-bold mb-4 text-brand border-b pb-2">Activity 3: Reading Comprehension</h2>
+                <p class="mb-6">Read the story below. Then, tell Mr. Rocha what it is about.</p>
+                
+                <div class="w-full mb-6 rounded-xl overflow-hidden shadow-sm flex justify-center bg-slate-100 dark:bg-slate-700">
+                    <img src="Image2.jpg" alt="Reading Comprehension Story Visual" class="w-full h-auto object-cover" onerror="this.onerror=null; this.src='https://placehold.co/1200x600/1e293b/38bdf8?text=Image2+(Activity+3)';">
+                </div>
+                
+                <div class="bg-slate-100 dark:bg-slate-700 p-6 rounded-xl mb-6 italic text-slate-700 dark:text-slate-300 shadow-inner">
+                    <p>Sofia, who is a high school student in Guadalajara, relies heavily on Mi Tren to get to her classes. The station where she boards the train is usually packed with early commuters. Last Monday, the train that she usually catches was delayed due to technical issues. The passengers, whose patience was wearing thin, started checking their watches anxiously. Fortunately, Sofia met a classmate, with whom she shared a taxi, allowing them to arrive just in time for their first period.</p>
+                </div>
+                
+                <div>
+                    <label class="block font-semibold mb-2">Summary:</label>
+                    <textarea class="a3-input shiny-border w-full p-3 h-32 bg-white dark:bg-slate-700 resize-y" placeholder="Explain what the story is about..."></textarea>
+                </div>
+                <div class="mt-6 flex justify-end no-print">
+                    <button class="check-btn bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg transition" onclick="checkActivity(3, 'open')">Check Answers</button>
+                </div>
+                <div class="feedback-msg hidden mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200"></div>
+            </div>
+        </section>
+
+        <!-- Section: Activity 4 -->
+        <section id="sec-act4" class="section-container hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <h2 class="text-xl font-bold mb-4 text-brand border-b pb-2">Activity 4: Relative Clauses Cloze Exercise</h2>
+                
+                <div class="mb-8">
+                    <label class="block font-semibold mb-2">Part A: Write a complete explanation of what relative clauses are. Include examples.</label>
+                    <textarea class="a4-open shiny-border w-full p-3 h-32 bg-white dark:bg-slate-700 resize-y" placeholder="Explain relative clauses here..."></textarea>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block font-semibold mb-4 text-lg">Part B: Complete the sentences using the correct relative clause marker (who, which, that, where, whose, when).</label>
+                    <div class="grid grid-cols-1 gap-4" id="act4-cloze-container">
+                        <!-- Generated via JS -->
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end no-print">
+                    <button class="check-btn bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg transition" onclick="checkActivity(4, 'cloze')">Check Answers</button>
+                </div>
+                <div class="feedback-msg hidden mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200"></div>
+            </div>
+        </section>
+
+        <!-- Section: Activity 5 -->
+        <section id="sec-act5" class="section-container hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <h2 class="text-xl font-bold mb-4 text-brand border-b pb-2">Activity 5: Commuting in Large Cities (B2 Level)</h2>
+                
+                <!-- Vocabulary -->
+                <div class="mb-8 p-4 bg-amber-50 dark:bg-slate-700 rounded-lg border border-amber-200 dark:border-slate-600">
+                    <h3 class="font-bold mb-2">Key Vocabulary:</h3>
+                    <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                        <li><strong>1. Commuter:</strong> A person who travels some distance to work on a regular basis.</li>
+                        <li><strong>2. Congestion:</strong> The state of being crowded and full of traffic.</li>
+                        <li><strong>3. Infrastructure:</strong> The basic physical systems of a city (roads, railways).</li>
+                        <li><strong>4. Pedestrian:</strong> A person walking along a road or in a developed area.</li>
+                        <li><strong>5. Public transit:</strong> Buses, trains, and other forms of transport available to the public.</li>
+                        <li><strong>6. Rush hour:</strong> The times of day when traffic is at its heaviest.</li>
+                        <li><strong>7. Sustainable:</strong> Able to be maintained at a certain rate or level.</li>
+                        <li><strong>8. Urbanization:</strong> The process of making an area more urban (city-like).</li>
+                        <li><strong>9. Gridlock:</strong> A traffic jam so bad that no movement is possible.</li>
+                        <li><strong>10. Emission:</strong> The production and discharge of something, especially gas.</li>
+                    </ul>
+                </div>
+
+                <!-- Drag and Drop Text -->
+                <h3 class="font-bold mb-4">Part A: Drag and drop (or tap to select, then tap the gap) the relative clauses to complete the text.</h3>
+                
+                <div class="mb-6 p-4 bg-slate-100 dark:bg-slate-900 rounded-lg flex flex-wrap gap-3 items-center justify-center min-h-[60px]" id="drag-source">
+                    <!-- Draggables generated via JS -->
+                </div>
+
+                <div class="text-lg leading-loose mb-8 text-justify" id="act5-text">
+                    Modern urbanization has created massive metropolitan areas <span class="dropzone" data-id="1"></span>. For millions of people <span class="dropzone" data-id="2"></span>, getting to work is a significant challenge. During the early hours of the morning <span class="dropzone" data-id="3"></span>, streets become filled with vehicles. City planners, <span class="dropzone" data-id="4"></span>, are constantly looking for solutions to reduce gridlock. Investing in electric buses and light rail systems, <span class="dropzone" data-id="5"></span>, is considered one of the best strategies for a sustainable future.
+                </div>
+
+                <!-- Multiple Choice -->
+                <h3 class="font-bold mb-4">Part B: Multiple Choice Questions</h3>
+                <div id="act5-mcq-container" class="space-y-6">
+                    <!-- Generated via JS -->
+                </div>
+
+                <div class="mt-8 flex justify-end no-print">
+                    <button class="check-btn bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg transition" onclick="checkActivity(5, 'mixed5')">Check Answers</button>
+                </div>
+                <div class="feedback-msg hidden mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200"></div>
+            </div>
+        </section>
+
+        <!-- Section: Activity 6 -->
+        <section id="sec-act6" class="section-container hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <h2 class="text-xl font-bold mb-4 text-brand border-b pb-2">Activity 6: Dictation</h2>
+                <p class="mb-6">Listen and write the complete sentence. Use capital letters where necessary. Add the correct punctuation. Be careful with spelling.</p>
+                
+                <div class="space-y-8" id="act6-container">
+                    <!-- Generated via JS -->
+                </div>
+
+                <div class="mt-8 flex justify-end no-print">
+                    <button class="check-btn bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg transition" onclick="checkActivity(6, 'dictation')">Check Answers</button>
+                </div>
+                <div class="feedback-msg hidden mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200"></div>
+            </div>
+        </section>
+
+        <!-- Section: Activity 7 -->
+        <section id="sec-act7" class="section-container hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <h2 class="text-xl font-bold mb-4 text-brand border-b pb-2">Activity 7: Listening Comprehension</h2>
+                <p class="mb-6">Listen to a speaker talk about the advantages of using a car in Guadalajara. What does she say are these advantages? What is the disadvantage she mentions?</p>
+                
+                <div class="mb-6">
+                    <audio controls class="w-full">
+                        <source src="Audio9.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-2">Your Answer:</label>
+                    <textarea class="a7-input shiny-border w-full p-3 h-32 bg-white dark:bg-slate-700 resize-y" placeholder="Write the advantages and disadvantages mentioned..."></textarea>
+                </div>
+                
+                <div class="mt-6 flex justify-end no-print">
+                    <button class="check-btn bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg transition" onclick="checkActivity(7, 'open')">Check Answers</button>
+                </div>
+                <div class="feedback-msg hidden mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200"></div>
+            </div>
+        </section>
+
+        <!-- Section: Activity 8 -->
+        <section id="sec-act8" class="section-container hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <h2 class="text-xl font-bold mb-4 text-brand border-b pb-2">Activity 8: Combining Sentences (B2 Level)</h2>
+                <p class="mb-4">Combine the sentences to form 10 complex sentences with relative clauses based on transportation and commuting. Use appropriate relative pronouns (who, which, that, where, whose).</p>
+                <div class="bg-blue-50 dark:bg-slate-700 p-4 rounded-lg mb-6 border border-blue-200 dark:border-slate-600 text-sm">
+                    <strong>Example:</strong>
+                    <br><em>Sentences:</em> The man is a taxi driver. His car is parked outside.
+                    <br><em>Combined:</em> The man whose car is parked outside is a taxi driver.
+                </div>
+                
+                <div class="space-y-6" id="act8-container">
+                    <!-- Generated via JS -->
+                </div>
+
+                <div class="mt-8 flex justify-end no-print">
+                    <button class="check-btn bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg transition" onclick="checkActivity(8, 'combine')">Check Answers</button>
+                </div>
+                <div class="feedback-msg hidden mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200"></div>
+            </div>
+        </section>
+
+        <!-- Section: Results -->
+        <section id="sec-results" class="section-container hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-6 md:p-10 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl md:text-4xl font-bold text-brand mb-2">Worksheet Results</h2>
+                    <p class="text-lg text-slate-600 dark:text-slate-300" id="res-student-info">Name - Date</p>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-8 mb-10 items-center justify-center">
+                    <!-- Overall Score Donut Chart -->
+                    <div class="w-full md:w-1/3 max-w-[250px]">
+                        <canvas id="overallChart"></canvas>
+                    </div>
+                    <div class="w-full md:w-2/3 max-w-lg">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 dark:bg-slate-700 p-6 rounded-xl mb-8 border border-blue-100 dark:border-slate-600">
+                    <h3 class="text-xl font-bold mb-4 text-brand">Feedback & Recommendations</h3>
+                    <p id="res-general-feedback" class="mb-4 font-semibold"></p>
+                    <ul id="res-recommendations" class="list-disc pl-6 space-y-2 text-slate-700 dark:text-slate-300">
+                        <!-- Generated via JS -->
+                    </ul>
+                </div>
+
+                <div class="flex justify-center no-print mt-8 gap-4">
+                    <button class="bg-brand hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition" onclick="window.print()">
+                        Print Results
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 w-full bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] no-print z-50 transition-colors duration-300">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <button id="btnPrev" class="px-5 py-2.5 rounded-lg font-medium bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 transition disabled:opacity-50" onclick="changeSection(-1)">
+                &larr; Back
+            </button>
+            <div class="text-sm font-semibold text-slate-500 dark:text-slate-400 hidden md:block">
+                Section <span id="lblSectionNum">Intro</span>
+            </div>
+            <div class="flex gap-3">
+                <button id="btnSubmit" class="px-5 py-2.5 rounded-lg font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-md transition" onclick="submitWorksheet()">
+                    Submit
+                </button>
+                <button id="btnNext" class="px-5 py-2.5 rounded-lg font-medium bg-brand hover:bg-blue-700 text-white shadow-md transition disabled:opacity-50" onclick="changeSection(1)">
+                    Next &rarr;
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- Data Definitions ---
+
+        const act4Sentences = [
+            { text: "The bus ___ goes to the city center is always late.", answer: ["which", "that"] },
+            { text: "The driver ___ helped me find the station was very polite.", answer: ["who", "that"] },
+            { text: "I remember the day ___ the new train line opened.", answer: ["when"] },
+            { text: "The station ___ I usually wait is closed for repairs.", answer: ["where"] },
+            { text: "The commuter ___ bicycle was stolen had to walk home.", answer: ["whose"] },
+            { text: "The ticket ___ I bought yesterday is already invalid.", answer: ["which", "that"] },
+            { text: "People ___ commute long distances often feel exhausted.", answer: ["who", "that"] },
+            { text: "Guadalajara is a city ___ traffic can be challenging.", answer: ["where"] },
+            { text: "The morning rush hour is the time ___ roads are busiest.", answer: ["when"] },
+            { text: "The woman ___ bag got stuck in the doors screamed.", answer: ["whose"] },
+            { text: "Public transport ___ is affordable benefits everyone.", answer: ["which", "that"] },
+            { text: "The mechanic ___ repaired my scooter did a great job.", answer: ["who", "that"] },
+            { text: "The neighborhood ___ I live has no subway access.", answer: ["where"] },
+            { text: "2020 was the year ___ fewer people commuted to work.", answer: ["when"] },
+            { text: "My friend, ___ father drives a taxi, gets free rides.", answer: ["whose"] }
+        ];
+
+        const act5Draggables = [
+            { id: "1", text: "where thousands of commuters gather" },
+            { id: "2", text: "who rely on public transport" },
+            { id: "3", text: "when rush hour begins" },
+            { id: "4", text: "whose daily journeys are exhausting" }, // Trick/alternative, text logic needs exact fit.
+            { id: "5", text: "which causes heavy pollution" }
+        ];
+        
+        // Correct mapping for act 5 text gaps:
+        // Modern urbanization has created massive metropolitan areas [where thousands of commuters gather] (1). 
+        // For millions of people [whose daily journeys are exhausting] (4), getting to work is a challenge.
+        // During the early hours of the morning [when rush hour begins] (3), streets become filled.
+        // City planners, [who rely on public transport] (WAIT - no, planners looking for solutions. Let's adjust.)
+        // Let's refine the answers to fit perfectly:
+        // massive metropolitan areas [where thousands of commuters gather] (1)
+        // millions of people [who rely on public transport] (2)
+        // morning [when rush hour begins] (3)
+        // City planners, [whose daily journeys are exhausting] -> NO.
+        // Let's rewrite the correct mapping to make logical sense:
+        
+        const act5CorrectMap = {
+            "1": "1", // areas where thousands...
+            "2": "2", // people who rely...
+            "3": "3", // morning when rush hour begins
+            "4": "4", // planners, whose... (Let's change text context slightly in HTML generation to fit "whose responsibility is to manage traffic")
+            "5": "5"  // systems, which causes... (Wait, systems which reduce emissions. Let's fix the draggable text definitions).
+        };
+        // Let's redefine the draggables to be perfectly logical B2 clauses:
+        const act5Clauses = [
+            { id: "1", text: "where millions of people live and work" },
+            { id: "2", text: "who rely entirely on public transportation" },
+            { id: "3", text: "when the morning rush hour officially begins" },
+            { id: "4", text: "whose main goal is to reduce traffic congestion" },
+            { id: "5", text: "which significantly lowers greenhouse gas emissions" }
+        ];
+        // Ensure text matches these IDs logically.
+        // Text: 
+        // Modern urbanization has created massive metropolitan areas [1]. For millions of people [2], getting to work is a significant challenge. During the early hours of the morning [3], streets become filled with vehicles. City planners, [4], are constantly looking for new solutions. Investing in electric buses and light rail systems, [5], is considered one of the best strategies for a sustainable future.
+
+        const act5MCQ = [
+            {
+                q: "1. What is a 'commuter'?",
+                opts: ["A type of vehicle", "Someone who travels to work regularly", "A traffic control system", "A city planner"],
+                ans: 1
+            },
+            {
+                q: "2. Which word is a synonym for 'gridlock'?",
+                opts: ["Speeding", "Highway", "Traffic jam", "Public transit"],
+                ans: 2
+            },
+            {
+                q: "3. What does 'sustainable' mean in the context of transport?",
+                opts: ["Extremely fast", "Costing a lot of money", "Causing environmental damage", "Able to be maintained without depleting resources"],
+                ans: 3
+            },
+            {
+                q: "4. What is the main role of city planners according to the text?",
+                opts: ["To drive buses", "To reduce traffic congestion", "To build more cars", "To travel during rush hour"],
+                ans: 1
+            },
+            {
+                q: "5. Why are electric buses mentioned?",
+                opts: ["They lower greenhouse gas emissions", "They are faster than cars", "They cause gridlock", "They are free for commuters"],
+                ans: 0
+            },
+            {
+                q: "6. When do streets become filled with vehicles?",
+                opts: ["At midnight", "During the morning rush hour", "Only on weekends", "During public holidays"],
+                ans: 1
+            }
+        ];
+
+        const act6Dictation = [
+            "The bus that I take to school is usually crowded during the morning rush hour.",
+            "Mi Tren, which connects several parts of Guadalajara, is a useful option for many commuters.",
+            "Students who live far from the city centre often leave home very early.",
+            "The time when traffic is heaviest is usually between seven and nine in the morning.",
+            "Many people use the bicycle lanes that have been built along major avenues.",
+            "The station where I change trains can become extremely busy in the afternoon.",
+            "Commuters whose workplaces are near a train station often avoid driving to work.",
+            "Guadalajara is a city where people can choose from buses, trains, bicycles, and shared cars."
+        ];
+
+        const act8Sentences = [
+            { 
+                p1: "The train broke down yesterday. It was completely full.", 
+                ans: ["The train which broke down yesterday was completely full.", "The train that broke down yesterday was completely full.", "The train which was completely full broke down yesterday.", "The train that was completely full broke down yesterday."] 
+            },
+            { 
+                p1: "I met a woman. Her electric bicycle was stolen.", 
+                ans: ["I met a woman whose electric bicycle was stolen."] 
+            },
+            { 
+                p1: "We visited the new station. The high-speed trains depart from there.", 
+                ans: ["We visited the new station where the high-speed trains depart from.", "We visited the new station where the high-speed trains depart.", "We visited the new station from which the high-speed trains depart."] 
+            },
+            { 
+                p1: "Seven o'clock is the time. Everyone rushes to work then.", 
+                ans: ["Seven o'clock is the time when everyone rushes to work."] 
+            },
+            { 
+                p1: "The passengers were very angry. They had waited for two hours.", 
+                ans: ["The passengers who had waited for two hours were very angry.", "The passengers that had waited for two hours were very angry.", "The passengers who were very angry had waited for two hours."] 
+            },
+            { 
+                p1: "The city council built a new bike lane. It is very safe.", 
+                ans: ["The city council built a new bike lane which is very safe.", "The city council built a new bike lane that is very safe."] 
+            },
+            { 
+                p1: "I prefer traveling on buses. They have air conditioning.", 
+                ans: ["I prefer traveling on buses which have air conditioning.", "I prefer traveling on buses that have air conditioning."] 
+            },
+            { 
+                p1: "The driver was speeding. He caused a terrible accident.", 
+                ans: ["The driver who was speeding caused a terrible accident.", "The driver that was speeding caused a terrible accident.", "The driver who caused a terrible accident was speeding."] 
+            },
+            { 
+                p1: "Guadalajara is the city. I learned to ride a motorcycle there.", 
+                ans: ["Guadalajara is the city where I learned to ride a motorcycle."] 
+            },
+            { 
+                p1: "My neighbor bought a hybrid car. His commute is very long.", 
+                ans: ["My neighbor whose commute is very long bought a hybrid car."] 
+            }
+        ];
+
+        // --- State Management ---
+        const sections = ['intro', 'act1', 'act2', 'act3', 'act4', 'act5', 'act6', 'act7', 'act8', 'results'];
+        let currentIndex = 0;
+        
+        let scores = {
+            act1: { score: 0, max: 3, done: false },
+            act2: { score: 0, max: 1, done: false },
+            act3: { score: 0, max: 1, done: false },
+            act4: { score: 0, max: 15, done: false },
+            act5: { score: 0, max: 11, done: false }, // 5 drag + 6 mcq
+            act6: { score: 0, max: 8, done: false },
+            act7: { score: 0, max: 1, done: false },
+            act8: { score: 0, max: 10, done: false }
+        };
+
+        // --- Initialization ---
+        document.addEventListener("DOMContentLoaded", () => {
+            generateAct4();
+            generateAct5();
+            generateAct6();
+            generateAct8();
+            updateNavigation();
+            
+            // Theme setup
+            const themeBtn = document.getElementById('themeToggle');
+            themeBtn.addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+            });
+        });
+
+        // --- Generators ---
+        function generateAct4() {
+            const container = document.getElementById('act4-cloze-container');
+            let html = '';
+            act4Sentences.forEach((item, i) => {
+                const parts = item.text.split('___');
+                html += `
+                    <div class="flex flex-wrap items-center gap-2 text-lg">
+                        <span>${i+1}. ${parts[0]}</span>
+                        <input type="text" class="a4-cloze shiny-border w-24 p-1 text-center bg-white dark:bg-slate-700" data-ans="${item.answer.join('|')}" placeholder="...">
+                        <span>${parts[1]}</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function generateAct5() {
+            // Draggables
+            const source = document.getElementById('drag-source');
+            let dragHtml = '';
+            // Shuffle draggables
+            const shuffled = [...act5Clauses].sort(() => Math.random() - 0.5);
+            shuffled.forEach(item => {
+                dragHtml += `<div class="draggable shiny-border bg-white dark:bg-slate-700 px-3 py-1 rounded shadow-sm text-sm font-medium" draggable="true" data-id="${item.id}" onclick="handleTapSelect(this)">${item.text}</div>`;
+            });
+            source.innerHTML = dragHtml;
+
+            // Fix text based on defined IDs
+            const textEl = document.getElementById('act5-text');
+            textEl.innerHTML = `Modern urbanization has created massive metropolitan areas <span class="dropzone shiny-border" data-id="1" onclick="handleTapDrop(this)"></span>. For millions of people <span class="dropzone shiny-border" data-id="2" onclick="handleTapDrop(this)"></span>, getting to work is a significant challenge. During the early hours of the morning <span class="dropzone shiny-border" data-id="3" onclick="handleTapDrop(this)"></span>, streets become filled with vehicles. City planners, <span class="dropzone shiny-border" data-id="4" onclick="handleTapDrop(this)"></span>, are constantly looking for new solutions. Investing in electric buses and light rail systems, <span class="dropzone shiny-border" data-id="5" onclick="handleTapDrop(this)"></span>, is considered one of the best strategies for a sustainable future.`;
+
+            // Init Drag and Drop Event Listeners
+            initDragAndDrop();
+
+            // MCQ
+            const mcqContainer = document.getElementById('act5-mcq-container');
+            let mcqHtml = '';
+            act5MCQ.forEach((qObj, i) => {
+                let optionsHtml = '';
+                // Shuffle options internally (keep track of correct answer)
+                let optsWithIndex = qObj.opts.map((opt, idx) => ({ text: opt, isCorrect: idx === qObj.ans }));
+                optsWithIndex.sort(() => Math.random() - 0.5);
+                
+                optsWithIndex.forEach((opt, idx) => {
+                    optionsHtml += `
+                        <label class="flex items-center gap-2 p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">
+                            <input type="radio" name="q5_${i}" value="${opt.isCorrect ? 'true' : 'false'}" class="w-4 h-4 text-brand bg-slate-100 border-slate-300 focus:ring-brand">
+                            <span>${opt.text}</span>
+                        </label>
+                    `;
+                });
+                mcqHtml += `
+                    <div class="mcq-question bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                        <p class="font-semibold mb-3">${qObj.q}</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            ${optionsHtml}
+                        </div>
+                    </div>
+                `;
+            });
+            mcqContainer.innerHTML = mcqHtml;
+        }
+
+        function generateAct6() {
+            const container = document.getElementById('act6-container');
+            let html = '';
+            act6Dictation.forEach((sent, i) => {
+                html += `
+                    <div>
+                        <div class="mb-2">
+                            <audio controls class="w-full max-w-sm h-10">
+                                <source src="Audio${i+1}.mp3" type="audio/mpeg">
+                                Your browser does not support audio.
+                            </audio>
+                        </div>
+                        <div class="flex gap-2 items-start">
+                            <span class="font-bold mt-3">${i+1}.</span>
+                            <textarea class="a6-dictation shiny-border w-full p-3 h-20 bg-white dark:bg-slate-700 resize-y" data-ans="${btoa(sent)}" placeholder="Write the sentence here..."></textarea>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function generateAct8() {
+            const container = document.getElementById('act8-container');
+            let html = '';
+            act8Sentences.forEach((item, i) => {
+                // Encode answers securely (basic base64 to avoid quotes breaking HTML)
+                const encAns = btoa(JSON.stringify(item.ans));
+                html += `
+                    <div class="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                        <p class="mb-2 font-medium">${i+1}. ${item.p1}</p>
+                        <textarea class="a8-combine shiny-border w-full p-2 h-16 bg-slate-50 dark:bg-slate-900 resize-y" data-ans="${encAns}" placeholder="Combined sentence..."></textarea>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // --- Drag and Drop Logic (with tap fallback) ---
+        let selectedDraggable = null;
+
+        function initDragAndDrop() {
+            const draggables = document.querySelectorAll('.draggable');
+            const dropzones = document.querySelectorAll('.dropzone');
+
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', draggable.dataset.id);
+                    draggable.classList.add('opacity-50');
+                });
+                draggable.addEventListener('dragend', () => {
+                    draggable.classList.remove('opacity-50');
+                });
+            });
+
+            dropzones.forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.classList.add('drag-over');
+                });
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    const id = e.dataTransfer.getData('text/plain');
+                    const draggedEl = document.querySelector(`.draggable[data-id="${id}"]`);
+                    if(draggedEl) placeItemInZone(draggedEl, zone);
+                });
+            });
+        }
+
+        // Tap fallback for mobile
+        function handleTapSelect(el) {
+            if(el.closest('.dropzone')) {
+                // If it's already in a dropzone, move it back to source
+                document.getElementById('drag-source').appendChild(el);
+                return;
+            }
+            // Deselect previous
+            document.querySelectorAll('.draggable').forEach(d => d.classList.remove('selected', 'ring-2', 'ring-brand'));
+            selectedDraggable = el;
+            el.classList.add('selected', 'ring-2', 'ring-brand');
+        }
+
+        function handleTapDrop(zone) {
+            if (selectedDraggable) {
+                placeItemInZone(selectedDraggable, zone);
+                selectedDraggable.classList.remove('selected', 'ring-2', 'ring-brand');
+                selectedDraggable = null;
+            } else if (zone.children.length > 0) {
+                // Move item back to source if clicked without selection
+                document.getElementById('drag-source').appendChild(zone.children[0]);
+            }
+        }
+
+        function placeItemInZone(item, zone) {
+            // If zone already has an item, send it back to source
+            if(zone.children.length > 0) {
+                document.getElementById('drag-source').appendChild(zone.children[0]);
+            }
+            zone.appendChild(item);
+        }
+
+        // --- Navigation ---
+        function changeSection(dir) {
+            const nextIndex = currentIndex + dir;
+            if (nextIndex >= 0 && nextIndex < sections.length) {
+                document.getElementById(`sec-${sections[currentIndex]}`).classList.add('hidden');
+                document.getElementById(`sec-${sections[currentIndex]}`).classList.remove('active');
+                
+                currentIndex = nextIndex;
+                
+                document.getElementById(`sec-${sections[currentIndex]}`).classList.remove('hidden');
+                document.getElementById(`sec-${sections[currentIndex]}`).classList.add('active');
+                
+                updateNavigation();
+                window.scrollTo(0, 0);
+
+                if (sections[currentIndex] === 'results') {
+                    generateResults();
+                }
+            }
+        }
+
+        function updateNavigation() {
+            document.getElementById('btnPrev').disabled = currentIndex === 0;
+            document.getElementById('btnNext').style.display = currentIndex === sections.length - 1 ? 'none' : 'block';
+            document.getElementById('btnSubmit').style.display = currentIndex === sections.length - 1 ? 'none' : 'block';
+            
+            const progress = ((currentIndex + 1) / sections.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            
+            let sectionName = currentIndex === 0 ? 'Intro' : (currentIndex === sections.length - 1 ? 'Results' : `Activity ${currentIndex}`);
+            document.getElementById('lblSectionNum').innerText = sectionName;
+        }
+
+        // --- Checking Logic ---
+        function cleanString(str) {
+            return str.toLowerCase().replace(/[.,!?]/g, '').trim().replace(/\s+/g, ' ');
+        }
+
+        function lockSection(actNum) {
+            const sec = document.getElementById(`sec-act${actNum}`);
+            const inputs = sec.querySelectorAll('input, textarea, select');
+            inputs.forEach(inp => inp.disabled = true);
+            const checkBtn = sec.querySelector('.check-btn');
+            if(checkBtn) {
+                checkBtn.disabled = true;
+                checkBtn.classList.replace('bg-emerald-600', 'bg-slate-400');
+                checkBtn.innerText = "Checked";
+            }
+            const draggables = sec.querySelectorAll('.draggable, .dropzone');
+            draggables.forEach(d => {
+                d.draggable = false;
+                d.onclick = null;
+                d.classList.remove('cursor-pointer');
+            });
+        }
+
+        function showFeedbackMsg(actNum, score, max) {
+            const msgEl = document.querySelector(`#sec-act${actNum} .feedback-msg`);
+            msgEl.classList.remove('hidden');
+            let perc = (score/max)*100;
+            let text = `You scored ${score} out of ${max}. `;
+            if(perc === 100) text += "Perfect! Excellent work.";
+            else if(perc >= 70) text += "Good job! You're on the right track.";
+            else text += "Keep practicing! Review the rules and try similar exercises.";
+            msgEl.innerText = text;
+        }
+
+        function checkActivity(actNum, type) {
+            if(scores[`act${actNum}`].done) return;
+            let score = 0;
+            let max = scores[`act${actNum}`].max;
+
+            if (type === 'open') {
+                const inputs = document.querySelectorAll(`.a${actNum}-input`);
+                inputs.forEach(inp => {
+                    if(inp.value.trim().length > 10) {
+                        score++;
+                        inp.classList.add('correct-input');
+                    } else {
+                        inp.classList.add('incorrect-input');
+                        inp.value += "\n\n[Teacher Note: Answer too short or empty.]";
+                    }
+                });
+            } 
+            else if (type === 'cloze') {
+                const inputs = document.querySelectorAll('.a4-cloze');
+                inputs.forEach(inp => {
+                    const validAnswers = inp.getAttribute('data-ans').split('|');
+                    const userAns = inp.value.trim().toLowerCase();
+                    if(validAnswers.includes(userAns)) {
+                        score++;
+                        inp.classList.add('correct-input');
+                    } else {
+                        inp.classList.add('incorrect-input');
+                        // Show correct answer in placeholder
+                        inp.value = userAns + ` (Answer: ${validAnswers[0]})`;
+                    }
+                });
+                // open ended part A
+                const openA = document.querySelector('.a4-open');
+                if(openA.value.trim().length > 10) {
+                     openA.classList.add('correct-input');
+                }
+            }
+            else if (type === 'mixed5') {
+                // Check drag and drop
+                const dropzones = document.querySelectorAll('.dropzone');
+                dropzones.forEach(zone => {
+                    const expectedId = zone.getAttribute('data-id');
+                    if(zone.children.length > 0) {
+                        const droppedId = zone.children[0].getAttribute('data-id');
+                        if(expectedId === droppedId) {
+                            score++;
+                            zone.children[0].classList.add('bg-green-600', 'border-green-600');
+                        } else {
+                            zone.children[0].classList.add('bg-red-600', 'border-red-600');
+                        }
+                    } else {
+                        zone.classList.add('bg-red-200');
+                    }
+                });
+
+                // Check MCQ
+                for(let i=0; i<6; i++) {
+                    const radios = document.getElementsByName(`q5_${i}`);
+                    let answered = false;
+                    radios.forEach(radio => {
+                        if(radio.checked) {
+                            answered = true;
+                            if(radio.value === 'true') {
+                                score++;
+                                radio.parentElement.classList.add('text-green-600', 'font-bold', 'bg-green-50');
+                            } else {
+                                radio.parentElement.classList.add('text-red-600', 'font-bold', 'bg-red-50');
+                            }
+                        }
+                        // highlight correct
+                        if(radio.value === 'true') {
+                            radio.parentElement.classList.add('underline', 'decoration-green-500', 'decoration-2');
+                        }
+                    });
+                }
+            }
+            else if (type === 'dictation') {
+                const inputs = document.querySelectorAll('.a6-dictation');
+                inputs.forEach(inp => {
+                    const expected = atob(inp.getAttribute('data-ans'));
+                    const cleanUser = cleanString(inp.value);
+                    const cleanExpected = cleanString(expected);
+                    if(cleanUser === cleanExpected) {
+                        score++;
+                        inp.classList.add('correct-input');
+                    } else {
+                        inp.classList.add('incorrect-input');
+                        inp.value += `\n\n[Correction: ${expected}]`;
+                    }
+                });
+            }
+            else if (type === 'combine') {
+                const inputs = document.querySelectorAll('.a8-combine');
+                inputs.forEach(inp => {
+                    const validAnswers = JSON.parse(atob(inp.getAttribute('data-ans')));
+                    const userAnsClean = cleanString(inp.value);
+                    
+                    let isCorrect = false;
+                    for(let ans of validAnswers) {
+                        if(cleanString(ans) === userAnsClean) {
+                            isCorrect = true; break;
+                        }
+                    }
+                    if(isCorrect) {
+                        score++;
+                        inp.classList.add('correct-input');
+                    } else {
+                        inp.classList.add('incorrect-input');
+                        inp.value += `\n\n[Suggested Answer: ${validAnswers[0]}]`;
+                    }
+                });
+            }
+
+            scores[`act${actNum}`].score = score;
+            scores[`act${actNum}`].done = true;
+            
+            lockSection(actNum);
+            showFeedbackMsg(actNum, score, max);
+        }
+
+        // --- Submission & Results ---
+        function submitWorksheet() {
+            // Jump to results section
+            while(sections[currentIndex] !== 'results') {
+                changeSection(1);
+            }
+        }
+
+        let chartsRendered = false;
+
+        function generateResults() {
+            const name = document.getElementById('studentName').value || "Student";
+            const date = document.getElementById('studentDate').value || new Date().toLocaleDateString();
+            document.getElementById('res-student-info').innerText = `${name} | ${date}`;
+
+            let totalScore = 0;
+            let totalMax = 0;
+            let sectionPercentages = [];
+
+            for(let i=1; i<=8; i++) {
+                let s = scores[`act${i}`];
+                totalScore += s.score;
+                totalMax += s.max;
+                sectionPercentages.push(Math.round((s.score / s.max) * 100));
+            }
+
+            const overallPercentage = Math.round((totalScore / totalMax) * 100);
+            
+            // Dynamic Recommendations
+            generateRecommendations(sectionPercentages, overallPercentage);
+
+            // Render Charts
+            if(!chartsRendered) {
+                renderCharts(overallPercentage, sectionPercentages);
+                chartsRendered = true;
+            }
+        }
+
+        function generateRecommendations(percs, overall) {
+            const recList = document.getElementById('res-recommendations');
+            const feedbackGen = document.getElementById('res-general-feedback');
+            
+            if(overall >= 85) feedbackGen.innerText = "Fantastic job! You have a solid grasp of relative clauses and commuting vocabulary.";
+            else if(overall >= 60) feedbackGen.innerText = "Good effort! You understand the basics but need some review in specific areas.";
+            else feedbackGen.innerText = "It looks like you found this challenging. Don't worry, review the material and try again!";
+
+            let recs = [];
+            
+            // Generate 8 specific recommendations
+            if(percs[0] < 100) recs.push("Activity 1 (Speaking/Writing): Practice expressing opinions with more complex sentence structures.");
+            else recs.push("Activity 1: Excellent expression of personal opinions regarding city transport.");
+
+            if(percs[1] < 100) recs.push("Activity 2 (Video Analysis): Work on extracting specific details while watching audio-visual material.");
+            else recs.push("Activity 2: Great observational skills and detail extraction.");
+
+            if(percs[2] < 100) recs.push("Activity 3 (Reading): Review narrative texts to better understand sequence and context clues.");
+            else recs.push("Activity 3: Strong reading comprehension of narrative texts containing relative clauses.");
+
+            if(percs[3] < 80) recs.push("Activity 4 (Cloze): Review the rules for relative pronouns (who for people, which/that for things, where for places).");
+            else recs.push("Activity 4: Solid understanding of basic relative pronoun rules.");
+
+            if(percs[4] < 80) recs.push("Activity 5 (B2 Reading/Drag Drop): Practice reading B2 level texts focusing on urban vocabulary and cohesive devices.");
+            else recs.push("Activity 5: Excellent handling of B2 vocabulary and complex text structure.");
+
+            if(percs[5] < 80) recs.push("Activity 6 (Dictation): Work on listening for detail, spelling accuracy, and proper punctuation in complex sentences.");
+            else recs.push("Activity 6: Highly accurate listening and transcription skills.");
+
+            if(percs[6] < 100) recs.push("Activity 7 (Listening Comp): Practice identifying main ideas (advantages/disadvantages) in extended monologues.");
+            else recs.push("Activity 7: Great ability to extract specific arguments from spoken English.");
+
+            if(percs[7] < 80) recs.push("Activity 8 (Combining): Focus on syntactic manipulation—practice merging simple sentences into complex ones without losing meaning.");
+            else recs.push("Activity 8: Advanced ability to synthesize information using relative clauses.");
+
+            recList.innerHTML = recs.map(r => `<li>${r}</li>`).join('');
+        }
+
+        function renderCharts(overall, percs) {
+            // Overall Donut Chart
+            const ctxOverall = document.getElementById('overallChart').getContext('2d');
+            new Chart(ctxOverall, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Achieved', 'Missed'],
+                    datasets: [{
+                        data: [overall, 100 - overall],
+                        backgroundColor: ['#3b82f6', '#e2e8f0'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: true, text: 'Overall Score: ' + overall + '%' }
+                    }
+                }
+            });
+
+            // Section Bar Chart
+            const ctxBar = document.getElementById('barChart').getContext('2d');
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: ['Act 1', 'Act 2', 'Act 3', 'Act 4', 'Act 5', 'Act 6', 'Act 7', 'Act 8'],
+                    datasets: [{
+                        label: 'Score Percentage (%)',
+                        data: percs,
+                        backgroundColor: [
+                            '#ef4444', '#f97316', '#f59e0b', '#84cc16', 
+                            '#10b981', '#06b6d4', '#3b82f6', '#8b5cf6'
+                        ],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true, max: 100 }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
